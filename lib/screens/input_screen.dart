@@ -1,11 +1,14 @@
+import 'package:bmi_calculator/BmiBrain.dart';
+import 'package:bmi_calculator/screens/result_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
 import '../component/bottom_button.dart';
 import '../component/icon_and_content.dart';
 import '../component/resusable_card.dart';
 import '../component/rounded_button.dart';
 import '../constant.dart';
+
+enum Gender { male, female }
 
 class InputScreen extends StatefulWidget {
   const InputScreen({Key? key}) : super(key: key);
@@ -15,7 +18,10 @@ class InputScreen extends StatefulWidget {
 }
 
 class _InputScreenState extends State<InputScreen> {
+  Gender selectedGender = Gender.male;
   int height = 180;
+  int age = 18;
+  int weight = 63;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +31,10 @@ class _InputScreenState extends State<InputScreen> {
         centerTitle: true,
         backgroundColor: kActiveCardColour,
         leading: IconButton(
-          icon: Image.asset('images/menu.png' ,color: Colors.white,),
+          icon: Image.asset(
+            'images/menu.png',
+            color: Colors.white,
+          ),
           onPressed: () {},
         ),
       ),
@@ -37,21 +46,33 @@ class _InputScreenState extends State<InputScreen> {
               children: [
                 Expanded(
                   child: ReusableCard(
-                      colour: kActiveCardColour,
+                      colour: selectedGender == Gender.male
+                          ? kActiveCardColour
+                          : kInactiveCardColour,
                       cardChild: const IconAndContent(
                         iconData: Icons.male,
                         text: 'Male',
                       ),
-                      onPress: () {}),
+                      onPress: () {
+                        setState(() {
+                          selectedGender = Gender.male;
+                        });
+                      }),
                 ),
                 Expanded(
                   child: ReusableCard(
-                      colour: kActiveCardColour,
+                      colour: selectedGender == Gender.female
+                          ? kActiveCardColour
+                          : kInactiveCardColour,
                       cardChild: const IconAndContent(
                         iconData: Icons.female,
                         text: 'Female',
                       ),
-                      onPress: () {}),
+                      onPress: () {
+                        setState(() {
+                          selectedGender = Gender.female;
+                        });
+                      }),
                 )
               ],
             ),
@@ -73,12 +94,12 @@ class _InputScreenState extends State<InputScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.baseline,
                       textBaseline: TextBaseline.alphabetic,
-                      children: const [
+                      children: [
                         Text(
-                          '163',
+                          height.toString(),
                           style: kNumberTextStyle,
                         ),
-                        Text(
+                        const Text(
                           'cm',
                           style: kLabelTextStyle,
                         )
@@ -127,8 +148,8 @@ class _InputScreenState extends State<InputScreen> {
                           const SizedBox(
                             height: 6.0,
                           ),
-                          const Text(
-                            '73',
+                          Text(
+                            weight.toString(),
                             style: kNumberTextStyle,
                           ),
                           const SizedBox(height: 14.0),
@@ -137,13 +158,21 @@ class _InputScreenState extends State<InputScreen> {
                             children: [
                               RoundedButton(
                                   icon: FontAwesomeIcons.minus,
-                                  onPressed: () {}),
+                                  onPressed: () {
+                                    setState((){
+                                      weight--;
+                                    });
+                                  }),
                               const SizedBox(
                                 width: 16.0,
                               ),
                               RoundedButton(
                                   icon: FontAwesomeIcons.plus,
-                                  onPressed: () {}),
+                                  onPressed: () {
+                                    setState((){
+                                      weight++;
+                                    });
+                                  }),
                             ],
                           )
                         ],
@@ -163,8 +192,8 @@ class _InputScreenState extends State<InputScreen> {
                           const SizedBox(
                             height: 6.0,
                           ),
-                          const Text(
-                            '19',
+                           Text(
+                            age.toString(),
                             style: kNumberTextStyle,
                           ),
                           const SizedBox(height: 14.0),
@@ -173,13 +202,21 @@ class _InputScreenState extends State<InputScreen> {
                             children: [
                               RoundedButton(
                                   icon: FontAwesomeIcons.minus,
-                                  onPressed: () {}),
+                                  onPressed: () {
+                                    setState((){
+                                      age--;
+                                    });
+                                  }),
                               const SizedBox(
                                 width: 16.0,
                               ),
                               RoundedButton(
                                   icon: FontAwesomeIcons.plus,
-                                  onPressed: () {}),
+                                  onPressed: () {
+                                    setState((){
+                                      age++;
+                                    });
+                                  }),
                             ],
                           )
                         ],
@@ -193,15 +230,21 @@ class _InputScreenState extends State<InputScreen> {
             buttonChild: const Center(
               child: Text(
                 'CALCULATE YOUR BMI',
-                style: TextStyle(
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
+                style: kBottomButtonStyle,
                 textAlign: TextAlign.center,
               ),
             ),
-            onTap: () {},
+            onTap: () {
+
+              BmiBrain bmi = BmiBrain(height: height, weight: weight);
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return ResultPage(
+                  bmiResult: bmi.getBmiResult(),
+                  resultText: bmi.getTextResult(),
+                  textInterpretation: bmi.getInterpretation(),
+                );
+              },));
+            },
           ),
         ],
       ),

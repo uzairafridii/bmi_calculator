@@ -5,12 +5,12 @@ class BottomButton extends StatelessWidget {
   const BottomButton({Key? key, required this.buttonChild, required this.onTap})
       : super(key: key);
   final Widget buttonChild;
-  final Function onTap;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => onTap,
+      onTap: onTap,
       child: Container(
         margin: const EdgeInsets.only(top: 15.0),
         width: double.infinity,
